@@ -1,0 +1,15 @@
+﻿# allows one Secret value to be updated in multiple KeyVaults; assumes same named Secret and multiple keyvaults. if one, remove "[0]"
+Param(
+ [Parameter(Mandatory=$true)]
+ [string]$SecretValue
+)
+
+$SecretsSecretvalue = ConvertTo-SecureString $SecretValue -AsPlainText -Force
+#$KeyVaults = (Get-AzKeyVault | ogv -PassThru).VaultName
+$TheSecretName = (Get-AzKeyVaultSecret -VaultName $KeyVaults| Select-Object Name | ogv -Title "Choose ONE Secret name to update" -PassThru).Name
+
+foreach ($KeyVault in $KeyVaults)
+{
+Set-AzKeyVaultSecret -VaultName $KeyVault -Name $TheSecretName -SecretValue $SecretsSecretvalue
+Write-Host "$TheSecretName updated to $KeyVault" -ForegroundColor Green
+}
