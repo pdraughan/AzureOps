@@ -3,9 +3,9 @@
 $subscriptionID = (Get-AzSubscription | ogv -PassThru).SubscriptionID
 Set-AzContext -Subscription $subscriptionID
 
-$KeyVaults = (Get-AzKeyVault | ogv -PassThru).VaultName
+$KeyVaults = (Get-AzKeyVault).VaultName
 #$ADApp = (Get-AzureADServicePrincipal | ogv -PassThru)
-$ADApp = (Get-AzureADGroup | ogv -PassThru)
+$ADApp = (Get-AzureADUser -All $true | ogv -PassThru)
 foreach ($KeyVault in $KeyVaults)
 {
 Set-AzKeyVaultAccessPolicy -VaultName "$KeyVault" -ObjectId $ADApp.ObjectID -PermissionsToKeys get, list, decrypt -PermissionsToSecrets get, list -PermissionsToCertificates get, list

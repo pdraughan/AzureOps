@@ -1,4 +1,5 @@
-﻿# Must first be connected to a SF cluster. Then update $applicationName and $serviceName to desired values
+﻿$SFApplication = $null
+# Must first be connected to a SF cluster. Then update $applicationName and $serviceName to desired values
 $SFApplication = (Get-ServiceFabricApplication | Select-Object ApplicationName, ApplicationTypeVersion, ApplicationStatus, HealthState | ogv -PassThru)
 $SFService = (Get-ServiceFabricService -ApplicationName $SFApplication.ApplicationName | ogv -PassThru)
 $SFPartitionID = (Get-ServiceFabricPartition -ServiceName $SFService.ServiceName).PartitionID
@@ -23,9 +24,12 @@ foreach ($node in $Nodes)
 {
 Write-Progress -Activity "Restarting Code Packages on $node" -Status "Node $i of $($Nodes.Count) completed" -PercentComplete (($i / $Nodes.Count) * 100)
 $codepackageinfo = (Get-ServiceFabricDeployedCodePackage -ApplicationName $SFApplication.ApplicationName -NodeName $node -ServiceManifestName $ServiceManifestName)
+try{
 Restart-ServiceFabricDeployedCodePackage -NodeName $node -ApplicationName $SFApplication.ApplicationName -ServiceManifestName $ServiceManifestName -CodePackageName $codepackageinfo.CodePackageName -ServicePackageActivationId $codepackageinfo.ServicePackageActivationId -CommandCompletionMode Verify | Out-Null
-Write-Host "$SFService.ServiceName is restarting on $node and will proceed to the next node in 30 seconds" -ForegroundColor DarkCyan
-Start-Sleep -Seconds 30
+}
+catch {}
+Write-Host "$SFService.ServiceName is restarting on $node and will proceed to the next node in 15 seconds" -ForegroundColor DarkCyan
+Start-Sleep -Seconds 10
 $i = $i + 1
 }
 Write-Host "The code packages for $ServiceName has been restarted on all nodes that host the DeployedCodePackages" -ForegroundColor Cyan

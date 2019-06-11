@@ -2,15 +2,6 @@
 
 # If the Vaule is already present then it will not be added twice.
 
-# Dev Hosting Subscription
-
-# Login-AzAccount -Subscription 487ec5aa-8e1c-4995-866b-a48292f8ed9d
-
-　
-
-# Hosting subscription
-
-# Login-AzAccount -Subscription b3be09f3-75e2-469e-8210-ea1ffa3a9f70
 
 　
 
