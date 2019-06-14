@@ -1,0 +1,15 @@
+- name: First Docs
+  href: index.md
+- name: Auto Start/Stop VM Schedule
+  href: AutoShutdownSchedule.md
+- name: Azure Resource Tags to Custom Logs
+  href: AzureResourceTagstoCustomLogs.md
+- name: Custom Logs Join Queries
+  href: CustomLogsQueries.md
+- name: Adding Custom Logs to Alerts
+  href: CustomLogsAddedtoAlerts.md
+- name: Just in Time Access
+  href: JIT.md
+- name: Run RunBooks More than Once an Hour
+  href: RunRunBooksOften.md
+
