@@ -4,7 +4,7 @@ In order to consume Azure Resource tags into a Custom Log within Log Analytics, 
 
 The runbook template is below. You will need to ensure your Automation account has the appropriate Variables available (_WorkspaceID_ and _WorkspaceKey_ as an example). Then, provide the Subscription ID(s) from whichever subscription you want the information to be gleaned and uploaded.
 
-NOTE: Runbooks have a schedule limit of once an hour. If you need this to run more often, go to [this article](RunRunBooksOfften.md).
+NOTE: Runbooks have a schedule limit of once an hour. If you need this to run more often, go to [this article](RunRunBooksOften.md).
 ```
 $connectionName = "AzureRunAsConnection"
 $servicePrincipalConnection=Get-AutomationConnection -Name $connectionName

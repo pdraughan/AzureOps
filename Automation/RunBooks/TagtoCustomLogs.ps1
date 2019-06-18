@@ -57,7 +57,7 @@ $logType = "Tags"
 }
 
 #do the actual tag research
-$resources = Get-AzResource -ExpandProperties
+$resources = Get-AzResource -ExpandProperties # -TagName "client" #adding that parameter limits the resources pulled in, but should expidite the runbook completion
 $arr = @()
 foreach($Azresource in $resources)
 {
@@ -65,7 +65,7 @@ foreach($Azresource in $resources)
     $Tags = $Azresource.Tags
     $temp = "" | select ResourceName,ResourceId,Tags
     #Checkign if tags is null or have value
-     if($Tags -ne $null)
+     if($Tags.Count -gt "0")
     {
         # Convert the job data to json
 
