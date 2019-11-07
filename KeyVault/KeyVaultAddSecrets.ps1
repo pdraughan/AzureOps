@@ -6,11 +6,10 @@ Param(
  [string]$SecretValue
 )
 #be in the right subscription context before running.
-#$subscriptionID = (Get-AzSubscription | ogv -PassThru).SubscriptionID
-#Set-AzContext -Subscription $subscriptionID
+Get-AzSubscription | ogv -PassThru | Set-AzContext
 
 $SecretsSecretvalue = ConvertTo-SecureString $SecretValue -AsPlainText -Force
-#$KeyVaults = (Get-AzKeyVault | ogv -PassThru).VaultName
+$KeyVaults = (Get-AzKeyVault | Select-Object VaultName, ResourceGroupName | ogv -PassThru).VaultName
 
 foreach ($KeyVault in $KeyVaults)
 {

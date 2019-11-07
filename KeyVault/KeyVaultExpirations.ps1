@@ -1,8 +1,11 @@
-﻿# get all vaults in a subscription
-$KeyVaults = (Get-AzKeyVault).VaultName
-$daysWarning = "30"
+﻿$subscriptionID = (Get-AzSubscription | ogv -Title "choose one or more subscriptions to check" -OutputMode Multiple).SubscriptionID
+$daysWarning = "90"
 
-# for ExpireDate, can include ALL versions by having the parameter be "-IncludeVersions" or only the most current, by using "-Versions Current"
+foreach ($sub in $subscriptionID)
+{
+Set-AzContext -Subscription $sub | Out-Null
+
+$KeyVaults = (Get-AzKeyVault).VaultName
 
 foreach ($KV in $KeyVaults)
 {
@@ -20,6 +23,9 @@ foreach ($KV in $KeyVaults)
                     {
                     Write-Host "ALERT! $KV has"$cert" Certificate expiring in "$DaysuntilExpire" days"
                     }
+                Elseif ($DaysuntilExpire -lt 0){
+                Write-Host "$KV has $cert expired"
+                }
                 Else
                     {
                     Out-Null
@@ -35,6 +41,10 @@ foreach ($KV in $KeyVaults)
                     {
                     Write-Host "ALERT! $KV has"$secret" Secret expiring in "$DaysuntilExpire" days"
                     }
+                    Elseif ($DaysuntilExpire -lt 0){
+                Write-Host "$KV has $secret expired"
+                }
+
                 Else
                     {
                     Out-Null
@@ -49,9 +59,15 @@ foreach ($KV in $KeyVaults)
                    { 
                     Write-Host "ALERT! $KV has"$key" Key expiring in "$DaysuntilExpire" days"
                     }
+                                    Elseif ($DaysuntilExpire -lt 0){
+                Write-Host "$KV has $key expired"
+                }
+
                 Else
                     {
                     Out-Null
                     }
             }
+}
+
 }

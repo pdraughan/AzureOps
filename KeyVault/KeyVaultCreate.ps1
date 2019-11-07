@@ -23,6 +23,6 @@ Set-AzureKeyVaultSecret -VaultName "$KeyVaultName" -Name 'CosmosDBName' -SecretV
 Set-AzureKeyVaultSecret -VaultName "$KeyVaultName" -Name 'RedisConnectionString' -SecretValue $secretvalue
 Set-AzureKeyVaultSecret -VaultName "$KeyVaultName" -Name 'ServiceBusConnectionString' -SecretValue $secretvalue
 
-Set-AzKeyVaultAccessPolicy -VaultName "$KeyVaultName" -ObjectId GUID -PermissionsToKeys get, create, delete, list, update, import, backup, restore, recover -PermissionsToSecrets get, list, set, delete, backup, restore, recover -PermissionsToCertificates get, delete, list, create, import, update, deleteissuers, getissuers, listissuers, managecontacts, manageissuers, setissuers, recover, backup, restore -PermissionsToStorage delete, deletesas, get, getsas, list, listsas, regeneratekey, set, setsas, update, recover, backup, restore
+Set-AzKeyVaultAccessPolicy -VaultName "$KeyVaultName" -ObjectId 95f17f90-2bdf-41f9-97c8-ed4df79cbf94 -PermissionsToKeys get, create, delete, list, update, import, backup, restore, recover -PermissionsToSecrets get, list, set, delete, backup, restore, recover -PermissionsToCertificates get, delete, list, create, import, update, deleteissuers, getissuers, listissuers, managecontacts, manageissuers, setissuers, recover, backup, restore -PermissionsToStorage delete, deletesas, get, getsas, list, listsas, regeneratekey, set, setsas, update, recover, backup, restore
 
 Get-AzKeyVault -VaultName "$KeyVaultName" | select VaultName
