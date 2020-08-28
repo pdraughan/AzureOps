@@ -1,0 +1,25 @@
+{
+    "apiVersion": "2015-06-15",
+    "type": "Microsoft.Compute/virtualMachines/extensions",
+    "name": "[concat(parameters('dnsLabelPrefix'),'/joindomain')]",
+    "location": "[parameters('location')]",
+    "dependsOn": [
+      "[concat('Microsoft.Compute/virtualMachines/', parameters('dnsLabelPrefix'))]"
+    ],
+    "properties": {
+      "publisher": "Microsoft.Compute",
+      "type": "JsonADDomainExtension",
+      "typeHandlerVersion": "1.3",
+      "autoUpgradeMinorVersion": true,
+      "settings": {
+        "Name": "[parameters('domainToJoin')]",
+        "OUPath": "[parameters('ouPath')]",
+        "User": "[concat(parameters('domainToJoin'), '\\', parameters('domainUsername'))]",
+        "Restart": "true",
+        "Options": "[parameters('domainJoinOptions')]"
+      },
+      "protectedSettings": {
+        "Password": "[parameters('domainPassword')]"
+      }
+    }
+  }
