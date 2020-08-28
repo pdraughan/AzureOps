@@ -1,7 +1,15 @@
-﻿$subscriptionID = (Get-AzSubscription | ogv -Title "choose one or more subscriptions to check" -OutputMode Multiple).SubscriptionID
+﻿<#
+.SYNOPSIS
+  Inteded to be placed in an Azure Automation account as a runbook, with a Log Analtyics Alert configured to trigger if the phrase "expiring in" is found.
+
+.PARAMETER SubID
+subscriptionID contexted needed for this runbook, where the targeted KeyVault(s) are located. Can accept multiple subscription IDs.
+
+#>
+
 $daysWarning = "90"
 
-foreach ($sub in $subscriptionID)
+foreach ($sub in $SubID)
 {
 Set-AzContext -Subscription $sub | Out-Null
 
@@ -9,7 +17,6 @@ $KeyVaults = (Get-AzKeyVault).VaultName
 
 foreach ($KV in $KeyVaults)
 {
-# I can't get a Try/Catch to work for "Forbidden" errors...
      $certificates = (Get-AzKeyVaultCertificate $KV).Name
      $secrets = (Get-AzKeyVaultSecret -VaultName $KV).Name
      $keys = (Get-AzKeyVaultKey -VaultName $KV).Name
