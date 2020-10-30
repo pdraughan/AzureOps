@@ -2,7 +2,8 @@
 .SYNOPSIS
   Deletes old files
 .DESCRIPTION
-  Connects to the listed storage account and deletes any file(s) in the designated folder, not modified in the last 7 days
+  Connects to the listed storage account and deletes any file(s) in the designated folder, not modified in the last 7 days.
+  Change the "-7" if you desire a different value or want a variable number of days.
 
 .PARAMETER SubscriptionID
    Manually Set
@@ -12,36 +13,31 @@
    Manually Set
    Allows you to specify the resource group containing the VMs to create the notification criteria.  
 
+.PARAMETER StorageAccount
+  Storage Account containing the Fileshare that needs cleaned.
+
+.PARAMETER ShareName
+  Name(s) of the FileShare needing the automated cleaning.
 #>
-$connectionName = "AzureRunAsConnection"
-try {
-  # Get the connection "AzureRunAsConnection "
-  $servicePrincipalConnection = Get-AutomationConnection -Name $connectionName         
 
-  "Logging in to Azure..."
-  Connect-AzAccount `
-    -ServicePrincipal `
-    -TenantId $servicePrincipalConnection.TenantId `
-    -ApplicationId $servicePrincipalConnection.ApplicationId `
-    -CertificateThumbprint $servicePrincipalConnection.CertificateThumbprint | Out-Null
-}
-catch {
-  if (!$servicePrincipalConnection) {
-    $ErrorMessage = "Connection $connectionName not found."
-    throw $ErrorMessage
-  }
-  else {
-    Write-Error -Message $_.Exception
-    throw $_.Exception
-  }
-}
-$subscriptionid = "GUID"
+# login to AZAccount (Only if being run from a runbook)
+<#
+  $azureADCredential = (Get-AutomationConnection -Name 'AzureRunAsConnection')
+  Connect-AzAccount -Tenant $azureADCredential.TenantID -ApplicationID $azureADCredential.ApplicationID -CertificateThumbprint $azureADCredential.CertificateThumbprint -ServicePrincipal
+#>
+
+Param(
+  [Parameter(Mandatory = $true)]
+  [string]$ResourceGroupName,
+  [Parameter(Mandatory = $true)]
+  [string]$subscriptionid,
+  [Parameter(Mandatory = $true)]
+  [string]$StorageAccount,
+  [Parameter(Mandatory = $true)]
+  [string]$sharename
+)
+
 set-azcontext -subscriptionID $subscriptionid | Out-Null
-
-#get all resource groups for the environment
-$ResourceGroupName = "xxxxxx"
-$StorageAccount = "XXXXXXXXX"
-$sharename = "share"
 
 $ctx = (Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $StorageAccount).Context  
 

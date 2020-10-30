@@ -15,36 +15,19 @@ The name of the Local Admin to be created/reset and placed in KeyVault.
 param
 (
     [Parameter (Mandatory = $true)]
-    [string] $Environment = 'dv01',
+    [string] $Environment,
     [Parameter (Mandatory = $true)]
-    [string] $subID = 'Subscription GUID goes here'
+    [string] $subID,
+    [Parameter (Mandatory = $true)]
+    [string] $KeyVaultName
 
 )
+# login to AZAccount (Only if being run from a runbook)
+<#
+  $azureADCredential = (Get-AutomationConnection -Name 'AzureRunAsConnection')
+  Connect-AzAccount -Tenant $azureADCredential.TenantID -ApplicationID $azureADCredential.ApplicationID -CertificateThumbprint $azureADCredential.CertificateThumbprint -ServicePrincipal
+#>
 
-$connectionName = "AzureRunAsConnection"
-try {
-    # Get the connection "AzureRunAsConnection "
-    $servicePrincipalConnection = Get-AutomationConnection -Name $connectionName         
-
-    "Logging in to Azure..."
-    Connect-AzAccount `
-        -ServicePrincipal `
-        -TenantId $servicePrincipalConnection.TenantId `
-        -ApplicationId $servicePrincipalConnection.ApplicationId `
-        -CertificateThumbprint $servicePrincipalConnection.CertificateThumbprint | Out-Null
-}
-catch {
-    if (!$servicePrincipalConnection) {
-        $ErrorMessage = "Connection $connectionName not found."
-        throw $ErrorMessage
-    }
-    else {
-        Write-Error -Message $_.Exception
-        throw $_.Exception
-    }
-}
-
-# set context to desired Subscription; below is Dev
 set-azcontext -subscriptionID $subID | Out-Null
 
 $userName = "SuperUsername"
@@ -54,7 +37,7 @@ foreach ($env in $Environment) {
         $pwd = ([char[]](Get-Random -Input $(65..90) -count 6)) + ([char[]](Get-Random -Input $(33, 40, 41, 63, 45, 58, 59, 44, 94, 38) -count 6)) + ([char[]](Get-Random -Input $(48..57) -count 6)) + ([char[]](Get-Random -Input $(65..90) -count 6)) + ([char[]](Get-Random -Input $(97..122) -count 6)) -join ""
         $secretpwd = $(ConvertTo-SecureString $pwd -AsPlainText -Force)
 
-        $null = Set-AzKeyVaultSecret -VaultName "kv-$env" -Name $userName -SecretValue $secretpwd -ContentType $userName
+        $null = Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $userName -SecretValue $secretpwd -ContentType $userName
         $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $userName, $secretpwd
         
         Write-Output "New password added to the KeyVault for $($env)."
