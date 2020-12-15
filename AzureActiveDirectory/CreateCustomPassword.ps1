@@ -1,5 +1,21 @@
-﻿#choose character length
-$length = 32
+﻿<#
+  .DESCRIPTION 
+  Creates a sufficiently random password, with a parameterized length. Potentially confusing characters (O or 0) have been removed.
+
+  .PARAMETER length
+  state the integer for how many characters you would like returned.
+
+  .EXAMPLE
+  ./CreateCustomPassword.ps1 -length 16
+  
+  .NOTES
+  Potentially confusing characters have been removed, but valid characters can be further adjusted after the "#allowed characters" section.
+#>
+
+Param(
+  [Parameter(Mandatory = $true)]
+  [string]$length
+)
 
 # allowed characters. Potentially confusing ones removed (ie, I/l)
 $letters = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ".ToCharArray()
