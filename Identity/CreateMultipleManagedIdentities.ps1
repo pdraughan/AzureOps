@@ -1,6 +1,9 @@
-﻿#Connect to AD and Azure Portal Account. Left as two cmdlets without caching credentials due to current MFA limitation.
-Connect-azuread
-Connect-azaccount
+﻿<#
+  .DESCRIPTION 
+  Once the AzureAD Group is in context, creates a system-managed identity for one or more Azure VMs.
+
+ #>
+
 #get the AD Group
 $AADGroup = (Get-AzureADGroup | ogv -Title "Choose the AD Group to which you want to join the VM" -PassThru)
 #choose subscription for the VM
@@ -22,6 +25,4 @@ Get-azvm -ResourceGroupName $VMResourceGroup[$i] -Name $vm[$i].Name -OutVariable
 #Using the desired GroupID and Newly created System Assigned Managed Identity, adds the VM to the AD Group
 Add-AzureAdGroupMember -ObjectId $AADGroup.ObjectId -RefObjectId $UpdatedVMInfo.Identity.PrincipalId
 Write-Host ""$VM[$i].Name"has been successfully added to"$AADGroup.DisplayName"" -ForegroundColor Green
-$i = $i + 1
 }
-$i = 0

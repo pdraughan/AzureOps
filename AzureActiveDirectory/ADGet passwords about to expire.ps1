@@ -1,4 +1,24 @@
-﻿# Retrieve credential from Automation asset store and authenticate to Azure AD
+﻿<#
+  .DESCRIPTION 
+  Uses Azure Automation Account's RunAs Account, with User Administrator or higher, to scan for any passwords expiring within the configuration number of days.
+
+
+  .PARAMETER daysExpire
+  The number of days for which you want to alert.
+
+  .EXAMPLE
+  ./ADGet_passwords_about_to_expire.ps1 -daysExpire 90
+
+  .NOTES
+User must have User Administrator or greater in order to get
+#>
+
+Param(
+  [Parameter(Mandatory = $true)]
+  [number]$daysExpire
+)
+
+# Retrieve credential from Automation asset store and authenticate to Azure AD
 $AzureADCredential = Get-AutomationPSCredential -Name "AzureADCredential"
 Connect-MsolService -Credential $AzureADCredential
 
@@ -6,7 +26,7 @@ Connect-MsolService -Credential $AzureADCredential
 $DefaultDomain = Get-MsolDomain | Where-Object {$_.IsDefault -eq $true} 
 
 # Retrieve password policy
-$PasswordPolicy =  New-TimeSpan -Days 90
+$PasswordPolicy =  New-TimeSpan -Days $daysExpire
 
 # Get all users in Azure AD
     $ADUsers = Get-MsolUser -All | Where-Object {($_.UserType -eq "Member") -and ($_.PasswordNeverExpires -ne $true) -and ($_.LastPasswordChangeTimestamp -lt [DateTime]::Today.AddDays(-76))} 
@@ -23,7 +43,7 @@ foreach ($ADUser in $ADUsers)
     $DaysSinceLastChanged = New-TimeSpan -Start (Get-Date) -End $LastChanged
 
     # Get list of all users and when their password expires
-    $DaysLeft = ($DaysSinceLastChanged.Days + 90)
+    $DaysLeft = ($DaysSinceLastChanged.Days + $daysExpire)
 
         $Users += New-Object psobject -Property @{
                    ObjectID = $ADUser.ObjectId

@@ -1,14 +1,36 @@
-﻿# Creates A Custom Log "_CL" to a given $logType. Whatever is sent via POST in this case, appears in 
-# Log Analytics as "Tags_CL". Using an OuterLeft JOIN, you can include the Tags off a given resource in the alert information.
+﻿<#
+  .DESCRIPTION 
+  As the AA RunAs Account, scans provided subscriptions for the existing Tags, and sends those values to Log Analytics as a custom log, for query and auditing purposes.
+  # Creates A Custom Log "_CL" to a given $logType. Whatever is sent via POST in this case, appears in 
+    # Log Analytics as "Tags_CL". Using an OuterLeft JOIN, you can include the Tags off a given resource in the alert information.
 
-# declare the SubscriptionIDs you want scanned
-$subscriptions = "xxxxxx","xxxxxx"
+  .PARAMETER Subscriptions
+  Subscriptions (multiple values accepted), from which you want to collect tags.  
+  .PARAMETER customerId
+  Log analytics WorkspaceID
+  .PARAMETER sharedKey
+  key from the workspace (same one used for manually registering an agent)
+
+  .EXAMPLE
+  ./TagtoCustomLogs.ps1 -subscriptions "1234-1234-23", "something else", "4321-432-12" -customerId "21345-1234-12" -sharedKey "base64 thingy"
+
+#>
+
+Param(
+  [Parameter(Mandatory = $true)]
+  [string]$Subscriptions,
+  [Parameter(Mandatory = $true)]
+  [string]$customerId,
+  [Parameter(Mandatory = $true)]
+  [string]$sharedKey
+)
+
+
+
 
 foreach ($sub in $subscriptions){
 set-azcontext -Subscription $sub | Out-Null
-# Get information required for Log Analytics workspace from Automation variables.
-$customerId = "xxxxxxx"
-$sharedKey = "xxxxxxxxxxxx"
+
 $method = "POST"
 # Set the name of the record type.
 $logType = "Tags"

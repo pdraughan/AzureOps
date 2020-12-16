@@ -1,6 +1,8 @@
-﻿#Connect to AD and Azure Portal Account. Left as two cmdlets without caching credentials due to current MFA limitation.
-Connect-azuread
-Connect-azaccount
+﻿<#
+  .DESCRIPTION 
+  Once the AzureAD Group is in context, creates a system-managed identity for a chosen AzureVM.
+#>
+
 #get the AD Group
 $groupID = (Get-AzureADGroup | ogv -Title "Choose the AD Group to which you want to join the VM" -PassThru).ObjectID
 #choose subscription for the VM
