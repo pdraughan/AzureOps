@@ -1,7 +1,34 @@
-#Connect-AzAccount
-#get SB information to be uploaded
-Set-AzContext -Subscription "xxxxxx" | Out-Null
-Get-AzServiceBusTopic -ResourceGroupName "xxxxx" -Namespace "xxxxxxxx" | Select-Object Name, SubscriptionCount, Id -OutVariable Topics | Out-Null
+<#
+  .DESCRIPTION 
+  As the AA RunAs Account, get the number of subscribers to a given topic, and send it to a Log Analytics API for custom log retention.
+
+
+  .PARAMETER SubscriptionID
+  Subscription ID where the service bus is located.  
+  .PARAMETER RG
+  Resource Group where the service bus is located.
+  .PARAMETER NameSpace
+  Name of the Service Bus.
+
+  .EXAMPLE
+  ./SBSubscriberCount.ps1 -subscriptionID 1234-1234-23 -RG "Resource Group" -NameSpace "ServiceBus Namespace"
+
+#>
+
+Param(
+  [Parameter(Mandatory = $true)]
+  [string]$SubscriptionID,
+  [Parameter(Mandatory = $true)]
+  [string]$RG,
+  [Parameter(Mandatory = $true)]
+  [string]$NameSpace
+)
+
+$cred = Get-AutomationPSCredential -Name 'xxxx'
+Connect-AzAccount -Credential $cred | Out-Null
+
+Set-AzContext -Subscription $SubscriptionID | Out-Null
+Get-AzServiceBusTopic -ResourceGroupName $RG -Namespace $NameSpace | Select-Object Name, SubscriptionCount -OutVariable Topics | Out-Null
 
 #send daata to CustomLogs
 # Get information required for Log Analytics workspace from Automation variables.
